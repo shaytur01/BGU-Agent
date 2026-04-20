@@ -1,0 +1,120 @@
+{
+  "schedule": [
+    {
+      "day": "monday",
+      "course": "מבוא למערכות הפעלה",
+      "type": "שיעור",
+      "start": "09:00",
+      "end": "11:00",
+      "building": "92",
+      "room": "01"
+    },    {
+      "day": "monday",
+      "course": "ניתוח ותיכון מערכות תוכנה",
+      "type": "תרגול",
+      "start": "12:00",
+      "end": "14:00",
+      "building": "72",
+      "room": "218"
+    },
+    {
+      "day": "monday",
+      "course": "פיסיקה מודרנית להנדסת תוכנה",
+      "type": "תרגול",
+      "start": "15:00",
+      "end": "16:00",
+      "building": "34",
+      "room": "18"
+    },
+    {
+      "day": "Tuesday",
+      "course": "נושאים מתקדמים בתכנות",
+      "type": "תרגול",
+      "start": "09:00",
+      "end": "11:00",
+      "building": "90",
+      "room": "226"
+    },
+    {
+      "day": "Tuesday",
+      "course": "רגרסיה ותכנון ניסויים למערכות",
+      "type": "תרגול",
+      "start": "13:00",
+      "end": "14:00",
+      "building": "90",
+      "room": "226"
+    },
+    {
+      "day": "Tuesday",
+      "course": "מודלים חישוביים",
+      "type": "תרגול",
+      "start": "14:00",
+      "end": "15:00",
+      "building": "90",
+      "room": "225"
+    },
+    {
+      "day": "Tuesday",
+      "course": "נושאים מתקדמים בתכנות",
+      "type": "שיעור",
+      "start": "16:00",
+      "end": "18:00",
+      "building": "90",
+      "room": "226"
+    },
+    {
+      "day": "Wednesday",
+      "course": "מודלים חישוביים",
+      "type": "שיעור",
+      "start": "10:00",
+      "end": "13:00",
+      "building": "92",
+      "room": "01"
+    },
+    {
+      "day": "Wednesday",
+      "course": "פיסיקה מודרנית להנדסת תוכנה",
+      "type": "שיעור",
+      "start": "13:00",
+      "end": "17:00",
+      "building": "26",
+      "room": "6"
+    },
+    {
+      "day": "Wednesday",
+      "course": "רגרסיה ותכנון ניסויים למערכות",
+      "type": "שיעור",
+      "start": "17:00",
+      "end": "20:00",
+      "building": "online",
+      "room": "online"
+    },
+    {
+      "day": "Thursday",
+      "course": "אגלית - מתקדמים ב",
+      "type": "שיעור",
+      "start": "10:00",
+      "end": "14:00",
+      "building": "72",
+      "room": "212"
+    },    
+    {
+      "day": "Thursday",
+      "course": "מבוא למערכות הפעלה",
+      "type": "שיעור",
+      "start": "10:00",
+      "end": "11:00",
+      "building": "90",
+      "room": "226"
+    },
+    {
+      "day": "Thursday",
+      "course": "ניתוח ותיכון מערכות תוכנה",
+      "type": "שיעור",
+      "start": "11:00",
+      "end": "15:00",
+      "building": "32",
+      "room": "307"
+    }
+  ]
+}
