@@ -58,7 +58,7 @@ async def send_daily_summary(context):
         wish = "יום זיכרון מכובד 🕯️" if solemn else "חג שמח! 🎉"
         await context.bot.send_message(
             chat_id=chat_id,
-            text=f"{greeting} היום {holiday_name} — אין שיעורים. {wish}"
+            text=f"{greeting} היום {holiday_name}\n\nאין שיעורים. {wish}"
         )
         return
 

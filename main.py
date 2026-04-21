@@ -141,7 +141,7 @@ unknown""",
             await update.message.reply_text("לא נמצאו שיעורים קרובים 🎉")
         elif holiday and day == "today":
             wish = "יום זיכרון מכובד 🕯️" if is_solemn(holiday) else "חג שמח! 🎉"
-            await update.message.reply_text(f"היום {holiday} — אין שיעורים. {wish}")
+            await update.message.reply_text(f"היום {holiday}\n\nאין שיעורים. {wish}")
         else:
             day_label = DAY_HEBREW.get(day, day)
             await update.message.reply_text(f"השיעור הבא שלך {day_label}:\n\n{format_class(cls)}")
@@ -150,7 +150,7 @@ unknown""",
         holiday = get_holiday(date.today())
         if holiday:
             wish = "יום זיכרון מכובד 🕯️" if is_solemn(holiday) else "חג שמח! 🎉"
-            await update.message.reply_text(f"היום {holiday} — אין שיעורים. {wish}")
+            await update.message.reply_text(f"היום {holiday}\n\nאין שיעורים. {wish}")
         else:
             classes = get_today_classes()
             if not classes:
