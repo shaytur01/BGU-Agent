@@ -5,6 +5,22 @@ Built with a **multi-model AI pipeline**: Claude Haiku for intent classification
 
 ---
 
+## The Problem It Solves
+
+As a software engineering student at BGU, I juggle lectures across multiple buildings, assignments spread across different courses, and a portal that doesn't send useful notifications. Every morning I was asking myself: *where is my next class? did I miss a deadline? do I need an umbrella today?*
+
+I built this agent to answer all of that without me having to think about it:
+
+- **Before I leave home** — I get an 8:00 AM summary of today's classes and a rain alert if I need an umbrella
+- **Between classes** — I ask "מה השיעור הבא שלי?" by voice and the bot answers instantly, even if my hands are full
+- **When I remember at 11pm** — the bot already reminded me at 20:00 about tomorrow's deadline
+- **During a lecture** — I send the PDF slides and get back a structured Hebrew summary to study from
+- **When the professor posts a new assignment** — the bot notifies me within 2 hours, before I even check the portal
+
+The goal was a single Telegram bot that replaces five browser tabs and three mental reminders — while also being a real engineering project worth showing.
+
+---
+
 ## Architecture
 
 ```
