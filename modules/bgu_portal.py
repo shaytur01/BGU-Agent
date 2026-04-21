@@ -83,6 +83,10 @@ def get_upcoming_assignments(days_ahead=7):
         # Parse the date from "2026-04-21T18:59:00Z" format
         due_date = datetime.fromisoformat(raw_date.replace("Z", "+00:00")).date()
 
+        # Skip already submitted assignments
+        if item.get("assignmentSubmissionDate"):
+            continue
+
         if today <= due_date <= cutoff:
             upcoming.append({
                 "title": title,
