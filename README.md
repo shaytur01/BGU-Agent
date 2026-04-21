@@ -5,6 +5,8 @@ Built with a **multi-model AI pipeline**: Claude Haiku for intent classification
 
 ---
 
+https://github.com/user-attachments/assets/940970e5-ae71-4e4c-bbdf-493cb45f3ae5
+
 ## The Problem It Solves
 
 As a software engineering student at BGU, I juggle lectures across multiple buildings, assignments spread across different courses, and a portal that doesn't send useful notifications. Every morning I was asking myself: *where is my next class? did I miss a deadline? do I need an umbrella today?*
