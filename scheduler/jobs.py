@@ -75,6 +75,9 @@ async def send_daily_summary(context):
 
 async def check_upcoming_classes(context):
     """Runs every minute — checks if a class starts in 30 minutes"""
+    if get_holiday(date.today()):
+        return  # No reminders on holidays
+
     chat_id = context.job.data
     now = datetime.now()
     in_30_minutes = (now + timedelta(minutes=30)).strftime("%H:%M")
@@ -82,7 +85,6 @@ async def check_upcoming_classes(context):
     classes = get_today_classes()
 
     for cls in classes:
-        # Check if this class starts in exactly 30 minutes and we haven't notified yet
         if cls["start"] == in_30_minutes and cls["start"] not in notified_today:
             notified_today.add(cls["start"])
             message = f"⏰ תזכורת! בעוד 30 דקות יש לך שיעור:\n\n{format_class(cls)}"
