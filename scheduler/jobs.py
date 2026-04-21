@@ -56,17 +56,10 @@ async def send_daily_summary(context):
         solemn = is_solemn(holiday_name)
         greeting = "בוקר טוב." if solemn else "☀️ בוקר טוב!"
         wish = "יום זיכרון מכובד 🕯️" if solemn else "חג שמח! 🎉"
-        if not classes:
-            await context.bot.send_message(
-                chat_id=chat_id,
-                text=f"{greeting} היום {holiday_name}.\nאין שיעורים היום. {wish}"
-            )
-        else:
-            message = f"{greeting} היום {holiday_name}.\n"
-            message += f"שים לב — יש לך שיעורים:\n\n"
-            for cls in classes:
-                message += format_class(cls) + "\n\n"
-            await context.bot.send_message(chat_id=chat_id, text=message)
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text=f"{greeting} היום {holiday_name} — אין שיעורים. {wish}"
+        )
         return
 
     if not classes:

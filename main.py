@@ -139,25 +139,18 @@ unknown""",
         cls, day = get_next_class()
         if cls is None:
             await update.message.reply_text("לא נמצאו שיעורים קרובים 🎉")
+        elif holiday and day == "today":
+            wish = "יום זיכרון מכובד 🕯️" if is_solemn(holiday) else "חג שמח! 🎉"
+            await update.message.reply_text(f"היום {holiday} — אין שיעורים. {wish}")
         else:
             day_label = DAY_HEBREW.get(day, day)
-            wish = "🕯️" if holiday and is_solemn(holiday) else "🎉"
-            prefix = f"היום {holiday} {wish}\n" if holiday and day == "today" else ""
-            await update.message.reply_text(f"{prefix}השיעור הבא שלך {day_label}:\n\n{format_class(cls)}")
+            await update.message.reply_text(f"השיעור הבא שלך {day_label}:\n\n{format_class(cls)}")
 
     elif intent == "today_classes":
         holiday = get_holiday(date.today())
         if holiday:
-            solemn = is_solemn(holiday)
-            wish = "יום זיכרון מכובד 🕯️" if solemn else "חג שמח! 🎉"
-            classes = get_today_classes()
-            if not classes:
-                await update.message.reply_text(f"היום {holiday}. אין שיעורים. {wish}")
-            else:
-                message = f"היום {holiday}. שים לב — יש לך שיעורים:\n\n"
-                for cls in classes:
-                    message += format_class(cls) + "\n\n"
-                await update.message.reply_text(message)
+            wish = "יום זיכרון מכובד 🕯️" if is_solemn(holiday) else "חג שמח! 🎉"
+            await update.message.reply_text(f"היום {holiday} — אין שיעורים. {wish}")
         else:
             classes = get_today_classes()
             if not classes:
