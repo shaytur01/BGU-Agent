@@ -63,7 +63,11 @@ def fetch_assignments():
     }
 
     response = session.post(ASSIGNMENTS_URL, json=payload)
-    return response.json()
+    data = response.json()
+    if data:
+        for item in data[:5]:
+            print(f"type={item.get('calenderDataType')} name={item.get('name')} date={item.get('date')}")
+    return data
 
 
 def get_upcoming_assignments(days_ahead=7):

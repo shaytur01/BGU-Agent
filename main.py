@@ -261,6 +261,34 @@ async def today_classes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(message)
 
 
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "📖 מה אני יודע לעשות:\n\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        "📅 לוח שיעורים:\n"
+        "• /today — שיעורי היום\n"
+        "• /next — השיעור הבא\n"
+        "• \"מה יש לי מחר?\"\n"
+        "• \"מה יש לי ביום שלישי?\"\n\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        "📋 הגשות ומבחנים:\n"
+        "• /deadlines — הגשות השבוע\n"
+        "• \"מה ההגשות הקרובות?\"\n\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        "📄 סיכום הרצאה:\n"
+        "• שלח קובץ PDF ואקבל סיכום\n\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        "🔔 התראות אוטומטיות:\n"
+        "• ☀️ סיכום יומי בשעה 08:00\n"
+        "• ⏰ תזכורת 30 דקות לפני שיעור\n"
+        "• 📚 תזכורת הגשות בשעה 20:00\n"
+        "• 🌧️ התראת גשם בבוקר אם צפוי גשם\n"
+        "• 🔔 התראה כשנוספת הגשה חדשה\n\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        "🎙️ אפשר לדבר אלי בהודעה קולית!"
+    )
+
+
 def main():
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
@@ -276,6 +304,7 @@ def main():
     app.add_handler(CommandHandler("next", next_class))
     app.add_handler(CommandHandler("today", today_classes))
     app.add_handler(CommandHandler("deadlines", deadlines))
+    app.add_handler(CommandHandler("help", help_command))
 
     # This catches ANY text message that is not a command
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_natural_language))
