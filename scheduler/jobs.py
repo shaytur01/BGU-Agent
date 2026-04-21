@@ -1,6 +1,9 @@
-from datetime import datetime, timedelta, timezone, time
+from datetime import datetime, timedelta, timezone, time, date
+import holidays
 from modules.schedule import get_today_classes, format_class
 from modules.bgu_portal import get_tomorrow_assignments, format_assignments_grouped
+
+israel_holidays = holidays.Israel(years=range(2025, 2028))
 
 # Israel is UTC+3
 ISRAEL_TZ = timezone(timedelta(hours=3))
@@ -15,7 +18,24 @@ async def send_daily_summary(context):
     notified_today = set()  # Reset for the new day
 
     chat_id = context.job.data
+    today = date.today()
     classes = get_today_classes()
+
+    # Check if today is an Israeli holiday
+    holiday_name = israel_holidays.get(today)
+    if holiday_name:
+        if not classes:
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=f"☀️ בוקר טוב! היום {holiday_name} 🎉\nאין שיעורים היום, חג שמח!"
+            )
+        else:
+            message = f"☀️ בוקר טוב! היום {holiday_name} 🎉\n"
+            message += "שים לב — יש לך שיעורים למרות החג:\n\n"
+            for cls in classes:
+                message += format_class(cls) + "\n\n"
+            await context.bot.send_message(chat_id=chat_id, text=message)
+        return
 
     if not classes:
         await context.bot.send_message(chat_id=chat_id, text="☀️ בוקר טוב! אין שיעורים היום 🎉")
