@@ -11,7 +11,8 @@ from modules.pdf_summary import process_lecture_pdf
 
 from modules.schedule import get_next_class, get_today_classes, get_tomorrow_classes, get_classes_by_day, format_class, DAY_HEBREW
 from modules.bgu_portal import get_upcoming_assignments, format_assignments_grouped
-from scheduler.jobs import setup_jobs
+from scheduler.jobs import setup_jobs, get_holiday
+from datetime import date
 
 # Load secret keys from .env file
 load_dotenv(dotenv_path=Path(__file__).parent / ".env")
@@ -134,22 +135,35 @@ unknown""",
 
     # Step 2: Our code handles formatting — not Claude
     if intent == "next_class":
+        holiday = get_holiday(date.today())
         cls, day = get_next_class()
         if cls is None:
             await update.message.reply_text("לא נמצאו שיעורים קרובים 🎉")
         else:
             day_label = DAY_HEBREW.get(day, day)
-            await update.message.reply_text(f"השיעור הבא שלך {day_label}:\n\n{format_class(cls)}")
+            prefix = f"היום {holiday} 🎉\n" if holiday and day == "today" else ""
+            await update.message.reply_text(f"{prefix}השיעור הבא שלך {day_label}:\n\n{format_class(cls)}")
 
     elif intent == "today_classes":
-        classes = get_today_classes()
-        if not classes:
-            await update.message.reply_text("אין שיעורים היום 🎉")
+        holiday = get_holiday(date.today())
+        if holiday:
+            classes = get_today_classes()
+            if not classes:
+                await update.message.reply_text(f"היום {holiday} 🎉 אין שיעורים, חג שמח!")
+            else:
+                message = f"היום {holiday} 🎉 אבל שים לב — יש לך שיעורים:\n\n"
+                for cls in classes:
+                    message += format_class(cls) + "\n\n"
+                await update.message.reply_text(message)
         else:
-            message = "השיעורים שלך היום:\n\n"
-            for cls in classes:
-                message += format_class(cls) + "\n\n"
-            await update.message.reply_text(message)
+            classes = get_today_classes()
+            if not classes:
+                await update.message.reply_text("אין שיעורים היום 🎉")
+            else:
+                message = "השיעורים שלך היום:\n\n"
+                for cls in classes:
+                    message += format_class(cls) + "\n\n"
+                await update.message.reply_text(message)
 
     elif intent == "deadlines":
         upcoming = get_upcoming_assignments(days_ahead=7)
@@ -216,7 +230,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "\"מה ההגשות הקרובות?\"\n\n"
         "━━━━━━━━━━━━━━━━━━\n"
         "🎙️ אפשר גם בהודעה קולית!\n"
-        "📄 שלח PDF של הרצאה לקבלת סיכום"
     )
 
 
