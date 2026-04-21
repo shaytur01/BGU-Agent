@@ -63,11 +63,7 @@ def fetch_assignments():
     }
 
     response = session.post(ASSIGNMENTS_URL, json=payload)
-    data = response.json()
-    if data:
-        for item in data[:5]:
-            print(f"type={item.get('calenderDataType')} name={item.get('name')} date={item.get('date')}")
-    return data
+    return response.json()
 
 
 def get_upcoming_assignments(days_ahead=7):
@@ -97,6 +93,56 @@ def get_upcoming_assignments(days_ahead=7):
 
     upcoming.sort(key=lambda x: x["due_date"])
     return upcoming
+
+
+EXAM_KEYWORDS = ["exam", "מבחן", "בחינה", "בחן", "test", "midterm", "final", "quiz"]
+
+def is_exam(title: str) -> bool:
+    title_lower = title.lower()
+    return any(kw in title_lower for kw in EXAM_KEYWORDS)
+
+
+def get_upcoming_exams(days_ahead=60):
+    """Returns exam-type items due within the next X days"""
+    today = date.today()
+    cutoff = today + timedelta(days=days_ahead)
+    all_items = fetch_assignments()
+    exams = []
+
+    for item in all_items:
+        raw_date = item.get("date", "")
+        title = item.get("name", "")
+        if not raw_date or not title or title.lower() == "none":
+            continue
+        if not is_exam(title):
+            continue
+        due_date = datetime.fromisoformat(raw_date.replace("Z", "+00:00")).date()
+        if today <= due_date <= cutoff:
+            exams.append({
+                "title": title,
+                "course": translate_course(item.get("courseName", "")),
+                "due_date": due_date,
+            })
+
+    exams.sort(key=lambda x: x["due_date"])
+    return exams
+
+
+def format_exams(exams):
+    if not exams:
+        return "אין מבחנים קרובים 🎉"
+    lines = []
+    today = date.today()
+    for e in exams:
+        days_left = (e["due_date"] - today).days
+        urgency = "⚠️ היום" if days_left == 0 else f"בעוד {days_left} ימים"
+        due_str = e["due_date"].strftime("%d/%m/%Y")
+        lines.append(f"━━━━━━━━━━━━━━━━━━")
+        lines.append(f"📚 {e['course']}")
+        lines.append(f"📌 {e['title']}")
+        lines.append(f"🗓 {due_str}  •  {urgency}\n")
+    lines.append("━━━━━━━━━━━━━━━━━━")
+    return "\n".join(lines)
 
 
 def get_tomorrow_assignments():

@@ -10,7 +10,7 @@ from groq import Groq
 from modules.pdf_summary import process_lecture_pdf
 
 from modules.schedule import get_next_class, get_today_classes, get_tomorrow_classes, get_classes_by_day, format_class, DAY_HEBREW
-from modules.bgu_portal import get_upcoming_assignments, format_assignments_grouped
+from modules.bgu_portal import get_upcoming_assignments, format_assignments_grouped, get_upcoming_exams, format_exams
 from scheduler.jobs import setup_jobs, get_holiday, is_solemn
 from datetime import date
 
@@ -120,6 +120,7 @@ next_class
 today_classes
 tomorrow_classes
 deadlines
+exams
 help
 specific_day:sunday
 specific_day:monday
@@ -161,6 +162,10 @@ unknown""",
                 for cls in classes:
                     message += format_class(cls) + "\n\n"
                 await update.message.reply_text(message)
+
+    elif intent == "exams":
+        exams = get_upcoming_exams()
+        await update.message.reply_text("📝 המבחנים הקרובים שלך:\n\n" + format_exams(exams))
 
     elif intent == "help":
         await help_command(update, context)
@@ -269,6 +274,11 @@ async def today_classes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(message)
 
 
+async def exams_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    exams = get_upcoming_exams()
+    await update.message.reply_text("📝 המבחנים הקרובים שלך:\n\n" + format_exams(exams))
+
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📖 מה אני יודע לעשות:\n\n"
@@ -312,6 +322,7 @@ def main():
     app.add_handler(CommandHandler("next", next_class))
     app.add_handler(CommandHandler("today", today_classes))
     app.add_handler(CommandHandler("deadlines", deadlines))
+    app.add_handler(CommandHandler("exams", exams_command))
     app.add_handler(CommandHandler("help", help_command))
 
     # This catches ANY text message that is not a command
