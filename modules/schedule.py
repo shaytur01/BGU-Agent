@@ -56,6 +56,21 @@ def get_classes_by_day(day: str):
     return result
 
 
+def get_week_classes():
+    """Returns all classes grouped by day, ordered Sunday→Saturday"""
+    order = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+    classes = load_schedule()
+    grouped = {}
+    for day in order:
+        day_classes = sorted(
+            [c for c in classes if c["day"].lower() == day],
+            key=lambda c: c["start"]
+        )
+        if day_classes:
+            grouped[day] = day_classes
+    return grouped
+
+
 def get_next_class():
     now = datetime.now()
     today = DAY_MAP[now.weekday()]

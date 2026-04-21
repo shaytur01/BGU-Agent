@@ -9,7 +9,7 @@ import anthropic
 from groq import Groq
 from modules.pdf_summary import process_lecture_pdf
 
-from modules.schedule import get_next_class, get_today_classes, get_tomorrow_classes, get_classes_by_day, format_class, DAY_HEBREW
+from modules.schedule import get_next_class, get_today_classes, get_tomorrow_classes, get_classes_by_day, get_week_classes, format_class, DAY_HEBREW
 from modules.bgu_portal import get_upcoming_assignments, format_assignments_grouped
 from scheduler.jobs import setup_jobs, get_holiday, is_solemn
 from datetime import date
@@ -100,6 +100,7 @@ async def handle_natural_language(update: Update, context: ContextTypes.DEFAULT_
 next_class
 today_classes
 tomorrow_classes
+week_classes
 deadlines
 help
 specific_day:sunday
@@ -161,6 +162,19 @@ unknown""",
             message = f"השיעורים שלך ב{day_label}:\n\n"
             for cls in classes:
                 message += format_class(cls) + "\n\n"
+            await update.message.reply_text(message)
+
+    elif intent == "week_classes":
+        grouped = get_week_classes()
+        if not grouped:
+            await update.message.reply_text("לא נמצאו שיעורים השבוע 🎉")
+        else:
+            message = "📅 המערכת השבועית שלך:\n\n"
+            for day, classes in grouped.items():
+                day_label = DAY_HEBREW.get(day, day)
+                message += f"━━━━━━━━━━━━━━━━━━\n{day_label}\n\n"
+                for cls in classes:
+                    message += format_class(cls) + "\n\n"
             await update.message.reply_text(message)
 
     elif intent == "tomorrow_classes":
