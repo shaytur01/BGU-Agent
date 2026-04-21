@@ -4,5 +4,6 @@ __pycache__/
 *.pyc
 *.pyo
 .DS_Store
+fonts/
 *.gguf
 ~/.cache/whisper/

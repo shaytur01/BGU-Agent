@@ -1,4 +1,5 @@
 import os
+import asyncio
 import tempfile
 from pathlib import Path
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 import anthropic
 from groq import Groq
+from modules.pdf_summary import process_lecture_pdf
 
 from modules.schedule import get_next_class, get_today_classes, get_tomorrow_classes, get_classes_by_day, format_class, DAY_HEBREW
 from modules.bgu_portal import get_upcoming_assignments, format_assignments_grouped
@@ -44,6 +46,38 @@ def get_schedule_context():
         context += f"\nהשיעור הבא: {next_cls['course']} ב{day_heb} בשעה {next_cls['start']}, בניין {next_cls['building']}, חדר {next_cls['room']}\n"
 
     return context
+
+
+async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Called when user sends a PDF — summarizes it and replies with a summary PDF"""
+    doc = update.message.document
+    if not doc.mime_type == "application/pdf":
+        await update.message.reply_text("אנא שלח קובץ PDF בלבד 📄")
+        return
+
+    await update.message.reply_text("📄 מעבד את הקובץ, זה יקח כמה שניות...")
+
+    pdf_file = await doc.get_file()
+
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+        tmp_path = tmp.name
+    await pdf_file.download_to_drive(tmp_path)
+
+    try:
+        loop = asyncio.get_event_loop()
+        summary_pdf_path = await loop.run_in_executor(None, process_lecture_pdf, tmp_path)
+        with open(summary_pdf_path, "rb") as f:
+            await update.message.reply_document(
+                document=f,
+                filename=f"סיכום - {doc.file_name}",
+                caption="✅ הסיכום שלך מוכן!"
+            )
+    except Exception as e:
+        await update.message.reply_text(f"❌ שגיאה בעיבוד הקובץ: {str(e)}")
+    finally:
+        os.remove(tmp_path)
+        if 'summary_pdf_path' in locals():
+            os.remove(summary_pdf_path)
 
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -226,6 +260,9 @@ def main():
     # This catches voice messages
     app.add_handler(MessageHandler(filters.VOICE, handle_voice))
 
+    # This catches PDF files
+    app.add_handler(MessageHandler(filters.Document.PDF, handle_pdf))
+
     async def send_startup_message(application):
         if saved_chat_id:
             await application.bot.send_message(
@@ -238,10 +275,14 @@ def main():
                     "• ⏰ תזכורת 30 דקות לפני כל שיעור\n"
                     "• 📚 תזכורת הגשות בשעה 20:00 (יום לפני)\n\n"
                     "━━━━━━━━━━━━━━━━━━\n"
-                    "💬 פשוט כתוב לי בעברית:\n"
+                    "💬 פשוט כתוב או דבר אלי בעברית:\n"
                     "\"מה השיעור הבא שלי?\"\n"
                     "\"מה יש לי מחר?\"\n"
-                    "\"מה ההגשות הקרובות?\""
+                    "\"מה ההגשות הקרובות?\"\n\n"
+                    "━━━━━━━━━━━━━━━━━━\n"
+                    "🎙️ אפשר גם לשלוח הודעה קולית!\n\n"
+                    "📄 שלח לי קובץ PDF של הרצאה\n"
+                    "ואחזיר לך סיכום מסודר"
                 )
             )
 
