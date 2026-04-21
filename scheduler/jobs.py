@@ -26,8 +26,13 @@ EXTRA_HOLIDAYS = {
     date(2025, 6, 1): "ערב שבועות",
 }
 
+SOLEMN_DAYS = {"יום הזיכרון", "יום כיפור"}
+
 def get_holiday(d: date) -> str | None:
     return israel_holidays.get(d) or EXTRA_HOLIDAYS.get(d)
+
+def is_solemn(holiday_name: str) -> bool:
+    return any(s in holiday_name for s in SOLEMN_DAYS)
 
 # Israel is UTC+3
 ISRAEL_TZ = timezone(timedelta(hours=3))
@@ -48,14 +53,17 @@ async def send_daily_summary(context):
     # Check if today is an Israeli holiday
     holiday_name = get_holiday(today)
     if holiday_name:
+        solemn = is_solemn(holiday_name)
+        greeting = "בוקר טוב." if solemn else "☀️ בוקר טוב!"
+        wish = "יום זיכרון מכובד 🕯️" if solemn else "חג שמח! 🎉"
         if not classes:
             await context.bot.send_message(
                 chat_id=chat_id,
-                text=f"☀️ בוקר טוב! היום {holiday_name} 🎉\nאין שיעורים היום, חג שמח!"
+                text=f"{greeting} היום {holiday_name}.\nאין שיעורים היום. {wish}"
             )
         else:
-            message = f"☀️ בוקר טוב! היום {holiday_name} 🎉\n"
-            message += "שים לב — יש לך שיעורים למרות החג:\n\n"
+            message = f"{greeting} היום {holiday_name}.\n"
+            message += f"שים לב — יש לך שיעורים:\n\n"
             for cls in classes:
                 message += format_class(cls) + "\n\n"
             await context.bot.send_message(chat_id=chat_id, text=message)

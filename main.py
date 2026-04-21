@@ -11,7 +11,7 @@ from modules.pdf_summary import process_lecture_pdf
 
 from modules.schedule import get_next_class, get_today_classes, get_tomorrow_classes, get_classes_by_day, format_class, DAY_HEBREW
 from modules.bgu_portal import get_upcoming_assignments, format_assignments_grouped
-from scheduler.jobs import setup_jobs, get_holiday
+from scheduler.jobs import setup_jobs, get_holiday, is_solemn
 from datetime import date
 
 # Load secret keys from .env file
@@ -141,17 +141,20 @@ unknown""",
             await update.message.reply_text("לא נמצאו שיעורים קרובים 🎉")
         else:
             day_label = DAY_HEBREW.get(day, day)
-            prefix = f"היום {holiday} 🎉\n" if holiday and day == "today" else ""
+            wish = "🕯️" if holiday and is_solemn(holiday) else "🎉"
+            prefix = f"היום {holiday} {wish}\n" if holiday and day == "today" else ""
             await update.message.reply_text(f"{prefix}השיעור הבא שלך {day_label}:\n\n{format_class(cls)}")
 
     elif intent == "today_classes":
         holiday = get_holiday(date.today())
         if holiday:
+            solemn = is_solemn(holiday)
+            wish = "יום זיכרון מכובד 🕯️" if solemn else "חג שמח! 🎉"
             classes = get_today_classes()
             if not classes:
-                await update.message.reply_text(f"היום {holiday} 🎉 אין שיעורים, חג שמח!")
+                await update.message.reply_text(f"היום {holiday}. אין שיעורים. {wish}")
             else:
-                message = f"היום {holiday} 🎉 אבל שים לב — יש לך שיעורים:\n\n"
+                message = f"היום {holiday}. שים לב — יש לך שיעורים:\n\n"
                 for cls in classes:
                     message += format_class(cls) + "\n\n"
                 await update.message.reply_text(message)
