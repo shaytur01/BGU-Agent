@@ -5,6 +5,30 @@ from modules.bgu_portal import get_tomorrow_assignments, format_assignments_grou
 
 israel_holidays = holidays.Israel(years=range(2025, 2028))
 
+# Holidays missing from the package
+EXTRA_HOLIDAYS = {
+    # 2026
+    date(2026, 4, 1): "ערב פסח",
+    date(2026, 4, 3): "חול המועד פסח",
+    date(2026, 4, 4): "חול המועד פסח",
+    date(2026, 4, 5): "חול המועד פסח",
+    date(2026, 4, 6): "חול המועד פסח",
+    date(2026, 4, 7): "חול המועד פסח",
+    date(2026, 4, 21): "יום הזיכרון",
+    date(2026, 5, 21): "ערב שבועות",
+    # 2025
+    date(2025, 4, 13): "ערב פסח",
+    date(2025, 4, 15): "חול המועד פסח",
+    date(2025, 4, 16): "חול המועד פסח",
+    date(2025, 4, 17): "חול המועד פסח",
+    date(2025, 4, 18): "חול המועד פסח",
+    date(2025, 4, 22): "יום הזיכרון",
+    date(2025, 6, 1): "ערב שבועות",
+}
+
+def get_holiday(d: date) -> str | None:
+    return israel_holidays.get(d) or EXTRA_HOLIDAYS.get(d)
+
 # Israel is UTC+3
 ISRAEL_TZ = timezone(timedelta(hours=3))
 
@@ -22,7 +46,7 @@ async def send_daily_summary(context):
     classes = get_today_classes()
 
     # Check if today is an Israeli holiday
-    holiday_name = israel_holidays.get(today)
+    holiday_name = get_holiday(today)
     if holiday_name:
         if not classes:
             await context.bot.send_message(
