@@ -136,6 +136,3 @@ def format_assignments_grouped(assignments):
     lines.append("━━━━━━━━━━━━━━━━━━")
 
     return "\n".join(lines)
-
-
-    return message

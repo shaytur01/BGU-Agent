@@ -28,25 +28,6 @@ claude = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 jobs_initialized = False
 
 
-def get_schedule_context():
-    """Builds a text summary of today's and next class for Claude to read"""
-    next_cls, day = get_next_class()
-    today_classes = get_today_classes()
-
-    context = "המידע הזמין לך:\n"
-
-    if today_classes:
-        context += "\nשיעורי היום:\n"
-        for cls in today_classes:
-            context += f"- {cls['course']} ({cls['type']}) בשעה {cls['start']}-{cls['end']}, בניין {cls['building']}, חדר {cls['room']}\n"
-    else:
-        context += "\nאין שיעורים היום.\n"
-
-    if next_cls:
-        day_heb = DAY_HEBREW.get(day, day)
-        context += f"\nהשיעור הבא: {next_cls['course']} ב{day_heb} בשעה {next_cls['start']}, בניין {next_cls['building']}, חדר {next_cls['room']}\n"
-
-    return context
 
 
 async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -249,7 +230,7 @@ async def next_class(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("לא נמצאו שיעורים קרובים 🎉")
         return
     day_label = DAY_HEBREW.get(day, day)
-    message = f"השיעור הבא שלך{day_label}:\n\n{format_class(cls)}"
+    message = f"השיעור הבא שלך ב{day_label}:\n\n{format_class(cls)}"
     await update.message.reply_text(message)
 
 
