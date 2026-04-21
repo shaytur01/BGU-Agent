@@ -120,6 +120,7 @@ next_class
 today_classes
 tomorrow_classes
 deadlines
+help
 specific_day:sunday
 specific_day:monday
 specific_day:tuesday
@@ -160,6 +161,9 @@ unknown""",
                 for cls in classes:
                     message += format_class(cls) + "\n\n"
                 await update.message.reply_text(message)
+
+    elif intent == "help":
+        await help_command(update, context)
 
     elif intent == "deadlines":
         upcoming = get_upcoming_assignments(days_ahead=7)
