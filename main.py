@@ -181,7 +181,13 @@ unknown""",
     elif intent == "tomorrow_classes":
         classes, tomorrow = get_tomorrow_classes()
         day_label = DAY_HEBREW.get(tomorrow, tomorrow)
-        if not classes:
+        from datetime import timedelta
+        tomorrow_date = date.today() + timedelta(days=1)
+        holiday = get_holiday(tomorrow_date)
+        if holiday:
+            wish = "יום זיכרון מכובד 🕯️" if is_solemn(holiday) else "חג שמח! 🎉"
+            await update.message.reply_text(f"מחר {holiday}\n\nאין שיעורים. {wish}")
+        elif not classes:
             await update.message.reply_text(f"אין שיעורים ב{day_label} 🎉")
         else:
             message = f"השיעורים שלך ב{day_label}:\n\n"
